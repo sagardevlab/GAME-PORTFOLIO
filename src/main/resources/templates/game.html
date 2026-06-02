@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Sagar Mehla — Game Portfolio</title>
+    <meta name="description" content="Sagar Mehla's developer portfolio — retro 2D game style. Navigate, explore, and discover projects, skills &amp; more!"/>
+    <meta name="theme-color" content="#0a0a14"/>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=VT323:wght@400&amp;display=swap" rel="stylesheet"/>
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/game.css}"/>
+
+    <style>
+        /* Extra inline tweaks */
+        #press-start-text { display:none; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOADING SCREEN
+═══════════════════════════════════════ -->
+<div id="loading-screen">
+    <div class="loading-content">
+        <div class="pixel-logo">🎮</div>
+        <div class="loading-title">SAGAR.EXE</div>
+        <div class="loading-subtitle">Software Developer @ SAP Labs · Bengaluru</div>
+        <div class="loading-bar-wrap">
+            <div class="loading-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-tip" id="loading-tip">Initialising game world...</div>
+        <div class="press-start" id="press-start-text">— PRESS ANY KEY TO START —</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HUD (hidden until game starts)
+═══════════════════════════════════════ -->
+<div id="hud" class="hidden">
+    <!-- Left: avatar + info -->
+    <div class="hud-left">
+        <div class="hud-avatar">🧑‍💻</div>
+        <div class="hud-info">
+            <div class="hud-name">SAGAR MEHLA</div>
+            <div class="hud-title">Software Developer @ SAP Labs</div>
+            <div class="hud-xp-bar">
+                <div class="hud-xp-fill" id="hud-xp-fill" style="width:0%"></div>
+            </div>
+            <div class="hud-xp-text" id="hud-xp-text">XP: 0 / 10000</div>
+        </div>
+    </div>
+
+    <!-- Center: current zone -->
+    <div class="hud-center">
+        <div class="hud-zone" id="hud-zone">🗺️ WORLD MAP</div>
+    </div>
+
+    <!-- Right: controls hint + buttons -->
+    <div class="hud-right">
+        <div class="hud-controls-hint">
+            <span>← → / A D — MOVE</span>
+            <span>↑ / W / SPACE — JUMP</span>
+            <span>ENTER — EXPLORE</span>
+        </div>
+        <button class="hud-btn" id="mute-btn" title="Toggle Sound">🔊</button>
+        <button class="hud-btn" id="help-btn" title="Controls Help">❓</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     GAME CANVAS
+═══════════════════════════════════════ -->
+<canvas id="gameCanvas"></canvas>
+
+<!-- Enter prompt -->
+<div id="enter-prompt" class="hidden">[ ENTER ] to explore</div>
+
+<!-- ═══════════════════════════════════════
+     MOBILE CONTROLS
+═══════════════════════════════════════ -->
+<div id="mobile-controls" class="hidden">
+    <!-- D-Pad left -->
+    <div class="dpad">
+        <button class="dpad-btn" id="btn-up">▲</button>
+        <button class="dpad-btn" id="btn-left">◄</button>
+        <button class="dpad-btn" id="btn-down">▼</button>
+        <button class="dpad-btn" id="btn-right">►</button>
+    </div>
+    <!-- Action buttons right -->
+    <div class="action-btns">
+        <button class="action-btn" id="btn-jump">
+            ↑<br/><small>JUMP</small>
+        </button>
+        <button class="action-btn" id="btn-action">
+            ⬛<br/><small>ENTER</small>
+        </button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     DIALOG OVERLAY
+═══════════════════════════════════════ -->
+<div id="dialog-overlay" class="hidden">
+    <div id="dialog-box">
+        <div id="dialog-header">
+            <span id="dialog-icon">📜</span>
+            <span id="dialog-title">Loading…</span>
+            <button id="dialog-close" title="Close [ESC]">✕</button>
+        </div>
+        <div id="dialog-body">
+            <!-- Populated dynamically by DialogManager.js -->
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HELP MODAL
+═══════════════════════════════════════ -->
+<div id="help-modal" class="hidden">
+    <div class="help-inner">
+        <h2>🎮 CONTROLS</h2>
+        <div class="help-grid">
+            <div class="help-item"><kbd>← / A</kbd> <span>Move Left</span></div>
+            <div class="help-item"><kbd>→ / D</kbd> <span>Move Right</span></div>
+            <div class="help-item"><kbd>↑ / W / SPACE</kbd> <span>Jump</span></div>
+            <div class="help-item"><kbd>ENTER</kbd> <span>Enter nearby building</span></div>
+            <div class="help-item"><kbd>ESC</kbd> <span>Close dialog</span></div>
+        </div>
+
+        <h3>🏠 BUILDINGS TO EXPLORE</h3>
+        <div class="help-buildings">
+            <div><b>🏠 HOME BASE</b> — About me &amp; links</div>
+            <div><b>🏰 PROJECTS</b> — My GitHub projects</div>
+            <div><b>⚔️ SKILLS</b> — Tech stack &amp; levels</div>
+            <div><b>🏆 TROPHIES</b> — Achievements &amp; certifications</div>
+            <div><b>📡 CONTACT</b> — Send me a message</div>
+        </div>
+
+        <h3>💡 TIPS</h3>
+        <div class="help-buildings">
+            <div>Collect 🪙 coins as you explore the map!</div>
+            <div>Buildings glow when you're close enough to enter.</div>
+            <div>Use on-screen buttons on mobile devices.</div>
+        </div>
+
+        <button id="help-close">✓ GOT IT — LET'S PLAY!</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOAST CONTAINER
+═══════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════
+     GAME SCRIPTS (order matters!)
+═══════════════════════════════════════ -->
+<script th:src="@{/js/AudioManager.js}"></script>
+<script th:src="@{/js/Camera.js}"></script>
+<script th:src="@{/js/GameMap.js}"></script>
+<script th:src="@{/js/Player.js}"></script>
+<script th:src="@{/js/SpriteRenderer.js}"></script>
+<script th:src="@{/js/ApiClient.js}"></script>
+<script th:src="@{/js/UIBuilder.js}"></script>
+<script th:src="@{/js/DialogManager.js}"></script>
+<script th:src="@{/js/GameEngine.js}"></script>
+
+</body>
+</html>
