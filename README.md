@@ -10,6 +10,8 @@
 
 ## 📸 Preview
 
+LIVE - https://game-portfolio-production.up.railway.app/
+
 The portfolio loads as a full-screen retro game:
 - A pixel-art character (with a red **S** cap) walks across a side-scrolling world map
 - Five buildings glow when approached: **Home**, **Projects**, **Skills**, **Trophies**, **Contact**
@@ -112,34 +114,6 @@ docker build -t game-portfolio .
 docker run -p 8080:8080 game-portfolio
 ```
 
----
-
-## ☁️ Deployment Options
-
-### Render (Free tier — recommended)
-1. Push this repo to GitHub
-2. Go to [render.com](https://render.com) → New → Web Service
-3. Connect repo, set **Build Command**: `mvn package -DskipTests`
-4. Set **Start Command**: `java -jar target/portfolio-1.0.0.jar`
-5. Set environment variable `PORT=10000` (Render's default)
-6. Deploy 🚀
-
-### Railway
-1. Push to GitHub
-2. New project → Deploy from GitHub repo
-3. Railway auto-detects Spring Boot and sets `PORT`
-
-### Fly.io
-```bash
-fly launch --dockerfile Dockerfile
-fly deploy
-```
-
-### AWS / Azure / GCP
-Use the Dockerfile with any container service (ECS, App Service, Cloud Run).
-
----
-
 ## 🎮 Controls
 
 | Key | Action |
@@ -151,41 +125,6 @@ Use the Dockerfile with any container service (ECS, App Service, Cloud Run).
 | `ESC` | Close dialog |
 
 Mobile: on-screen D-pad and action buttons auto-appear.
-
----
-
-## 🔧 Customising Your Data
-
-All portfolio data lives in one file:
-
-**`src/main/resources/...service/PortfolioDataService.java`**
-
-Edit the following methods to add your own content:
-- `getAllProjects()` — add/modify your GitHub projects
-- `getAllSkills()` — update skill levels and categories
-- `getAllTrophies()` — update achievements/certifications
-- `getPlayerStats()` — update name, title, location, links
-
-### Adding Email for Contact Form
-
-In `ContactService.java`, uncomment and wire in a mail sender:
-
-```java
-// Spring Mail
-@Autowired JavaMailSender mailSender;
-
-// Or use SendGrid / Mailgun SDK
-```
-
-Add to `application.properties`:
-```properties
-spring.mail.host=smtp.gmail.com
-spring.mail.port=587
-spring.mail.username=your@email.com
-spring.mail.password=your_app_password
-spring.mail.properties.mail.smtp.auth=true
-spring.mail.properties.mail.smtp.starttls.enable=true
-```
 
 ---
 
