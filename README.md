@@ -10,7 +10,7 @@
 
 ## 📸 Preview
 
-LIVE - https://game-portfolio-production.up.railway.app/
+LIVE - www.sagardevlab.in
 
 The portfolio loads as a full-screen retro game:
 - A pixel-art character (with a red **S** cap) walks across a side-scrolling world map
